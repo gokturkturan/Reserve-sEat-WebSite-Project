@@ -9,7 +9,6 @@ router.post("/login", userController.login);
 router.post("/logout", isAuth, userController.logout);
 router
   .route("/profile")
-  .get(isAuth, userController.getProfile)
   .put(isAuth, userController.updateProfile)
   .post(isRestaurant, userController.updateProfile);
 

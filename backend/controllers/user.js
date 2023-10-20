@@ -117,21 +117,6 @@ const logout = (req, res) => {
   res.status(200).json({ message: "Çıkış yapıldı." });
 };
 
-const getProfile = asyncHandler(async (req, res) => {
-  const user = await User.findById(req.user._id);
-  if (user) {
-    res.status(200).json({
-      _id: user._id,
-      name: user.name,
-      email: user.email,
-      phone: user.phone,
-    });
-  } else {
-    res.status(404);
-    throw new Error("Kullanıcı bulunamadı");
-  }
-});
-
 const updateProfile = asyncHandler(async (req, res) => {
   const { type } = req.body;
 
@@ -211,7 +196,6 @@ const userController = {
   register,
   login,
   logout,
-  getProfile,
   updateProfile,
 };
 

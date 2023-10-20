@@ -6,8 +6,7 @@ import { useDispatch, useSelector } from "react-redux";
 import { useNavigate } from "react-router-dom";
 import { useLogoutMutation } from "../slices/usersApiSlice";
 import { clearCredentials } from "../slices/authSlice";
-import { resetReservation } from "../slices/reservationSlice";
-import logo from "../assets/rr.png";
+import logo from "../assets/logo.png";
 import SearchBox from "./SearchBox";
 
 const Header = () => {
@@ -21,7 +20,6 @@ const Header = () => {
   const logoutHandler = async () => {
     try {
       await logout().unwrap();
-      dispatch(resetReservation());
       dispatch(clearCredentials());
       navigate("/login");
     } catch (error) {
@@ -31,7 +29,7 @@ const Header = () => {
 
   return (
     <header>
-      <Navbar bg="dark" variant="dark" expand="md" collapseOnSelect>
+      <Navbar expand="md" collapseOnSelect className="border">
         <Container>
           <LinkContainer to="/">
             <Navbar.Brand>
@@ -41,17 +39,34 @@ const Header = () => {
           <Navbar.Toggle aria-controls="basic-navbar-nav"></Navbar.Toggle>
           <Navbar.Collapse id="basic-navbar-nav">
             <Nav className="ms-auto">
-              <SearchBox />
+              <SearchBox isReservationPage={false} />
               {userInfo && userInfo.type === "restaurant" && (
-                <NavDropdown title="Restorant İşlemleri" id="adminMenu">
+                <NavDropdown
+                  title="Restorant İşlemleri"
+                  id="adminMenu"
+                  style={{ fontWeight: "600" }}
+                >
                   <LinkContainer to="/restaurant/branches">
                     <NavDropdown.Item>Şubeler</NavDropdown.Item>
+                  </LinkContainer>
+                  <LinkContainer to="/restaurant/reservations">
+                    <NavDropdown.Item>Rezervasyonlar</NavDropdown.Item>
                   </LinkContainer>
                 </NavDropdown>
               )}
               {userInfo ? (
-                <NavDropdown title={userInfo.name} id="username">
-                  <LinkContainer to={"/profile"}>
+                <NavDropdown
+                  title={userInfo.name}
+                  id="username"
+                  style={{ fontWeight: "600" }}
+                >
+                  <LinkContainer
+                    to={
+                      userInfo.type === "user"
+                        ? "/profile"
+                        : "restaurantprofile"
+                    }
+                  >
                     <NavDropdown.Item>Profil</NavDropdown.Item>
                   </LinkContainer>
                   <NavDropdown.Item onClick={logoutHandler}>

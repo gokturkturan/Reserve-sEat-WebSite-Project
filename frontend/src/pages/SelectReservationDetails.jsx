@@ -1,7 +1,7 @@
 import { useState, useEffect } from "react";
 import { Form, Button } from "react-bootstrap";
 import { useSelector } from "react-redux";
-import { useNavigate } from "react-router-dom";
+import { useNavigate, useParams } from "react-router-dom";
 import { Container, Row, Col } from "react-bootstrap";
 import { useGetRestaurantQuery } from "../slices/restaurantsApiSlice";
 import { useMakeReservationMutation } from "../slices/reservationApiSlice";
@@ -9,14 +9,13 @@ import Loader from "../components/Loader";
 import Message from "../components/Message";
 import { toast } from "react-toastify";
 
-const ReservationDetails = () => {
+const SelectReservationDetails = () => {
   const navigate = useNavigate();
 
   const { userInfo } = useSelector((state) => state.user);
   const { name, email, phone } = userInfo;
 
-  const { reservationInfos } = useSelector((state) => state.reservation);
-  const { restaurantId } = reservationInfos;
+  const { id: restaurantId } = useParams();
 
   const [makeReservation, { isLoading: loadingMakingReservation, error }] =
     useMakeReservationMutation();
@@ -37,6 +36,10 @@ const ReservationDetails = () => {
   const [workingHours, setWorkingHours] = useState("");
 
   useEffect(() => {
+    if (!restaurantId) {
+      navigate("/");
+      toast.error("Bir restorant seçmelisiniz.");
+    }
     if (branch) {
       const branchObject = restaurant.branches.find((b) => b.name === branch);
       const workingHours = branchObject.workingHours;
@@ -45,7 +48,7 @@ const ReservationDetails = () => {
       const workingHours = "";
       setWorkingHours(workingHours);
     }
-  }, [branch, restaurant]);
+  }, [branch, navigate, restaurant, restaurantId]);
 
   useEffect(() => {
     const today = new Date()
@@ -209,11 +212,11 @@ const ReservationDetails = () => {
               Rezervasyon Yap
             </Button>
             {loadingMakingReservation && <Loader />}
-            {error && (
-              <Message variant="danger">
-                {error?.data?.error || error.error}
-              </Message>
-            )}
+            <div style={{ marginTop: "1em" }}>
+              {error && (
+                <Message variant="danger">{error?.data?.message}</Message>
+              )}
+            </div>
           </Form>
         </Col>
       </Row>
@@ -221,4 +224,4 @@ const ReservationDetails = () => {
   );
 };
 
-export default ReservationDetails;
+export default SelectReservationDetails;

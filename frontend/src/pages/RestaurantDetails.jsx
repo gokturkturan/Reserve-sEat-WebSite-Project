@@ -1,30 +1,20 @@
 import React, { useState } from "react";
 import { useParams, useNavigate } from "react-router-dom";
 import { Link } from "react-router-dom";
-import {
-  Row,
-  Col,
-  Image,
-  ListGroup,
-  Card,
-  Button,
-  Form,
-} from "react-bootstrap";
-import { useDispatch, useSelector } from "react-redux";
+import { Row, Col, Image, ListGroup, Button, Form } from "react-bootstrap";
+import { useSelector } from "react-redux";
 import { toast } from "react-toastify";
 import Rating from "../components/Rating";
 import Loader from "../components/Loader";
 import Message from "../components/Message";
 import { useGetRestaurantQuery } from "../slices/restaurantsApiSlice";
 import { useSendRestaurantReviewMutation } from "../slices/restaurantsApiSlice";
-import { saveReservationInfos } from "../slices/reservationSlice";
 
 const RestaurantDetails = () => {
   const { id: restaurantId } = useParams();
   const { userInfo } = useSelector((state) => state.user);
 
   const navigate = useNavigate();
-  const dispatch = useDispatch();
 
   const [rating, setRating] = useState(0);
   const [comment, setComment] = useState("");
@@ -40,8 +30,7 @@ const RestaurantDetails = () => {
 
   const reservationHandler = () => {
     if (userInfo) {
-      dispatch(saveReservationInfos({ restaurantId }));
-      navigate(`/selectReservationDetails`);
+      navigate(`/selectReservationDetails/${restaurantId}`);
     } else {
       navigate(`/login?redirect=/selectReservationDetails`);
     }
@@ -93,21 +82,18 @@ const RestaurantDetails = () => {
                   />
                 </ListGroup.Item>
                 <ListGroup.Item>{restaurant.description}</ListGroup.Item>
-                <ListGroup.Item>
-                  <Col>
-                    <Card>
-                      <ListGroup variant="flush">
-                        <Button
-                          type="submit"
-                          variant="primary"
-                          onClick={reservationHandler}
-                        >
-                          Rezervasyon Yap
-                        </Button>
-                      </ListGroup>
-                    </Card>
-                  </Col>
-                </ListGroup.Item>
+                {userInfo && userInfo.type === "user" && (
+                  <ListGroup>
+                    <Button
+                      type="submit"
+                      variant="primary"
+                      className="mt-2"
+                      onClick={reservationHandler}
+                    >
+                      Rezervasyon Yap
+                    </Button>
+                  </ListGroup>
+                )}
               </ListGroup>
             </Col>
           </Row>

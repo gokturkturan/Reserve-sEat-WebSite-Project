@@ -13,17 +13,16 @@ const reservationSchema = mongoose.Schema(
       required: true,
     },
     branch: {
-      type: mongoose.Schema.Types.ObjectId,
-      ref: "Branch",
+      type: String,
       required: true,
     },
-    reservationDate: { type: Date, required: true },
+    reservationDate: { type: String, required: true },
     reservationTime: { type: String, required: true },
     note: { type: String },
     isApproved: {
-      type: Boolean,
+      type: String,
       required: true,
-      default: false,
+      default: "Pending",
     },
     ApprovedAt: {
       type: Date,

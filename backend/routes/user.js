@@ -1,6 +1,6 @@
 import express from "express";
 import userController from "../controllers/user.js";
-import { isAuth } from "../middleware/authHandler.js";
+import { isAuth, isRestaurant } from "../middleware/authHandler.js";
 
 const router = express.Router();
 
@@ -10,6 +10,7 @@ router.post("/logout", isAuth, userController.logout);
 router
   .route("/profile")
   .get(isAuth, userController.getProfile)
-  .put(isAuth, userController.updateProfile);
+  .put(isAuth, userController.updateProfile)
+  .post(isRestaurant, userController.updateProfile);
 
 export default router;

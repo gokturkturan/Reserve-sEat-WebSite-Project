@@ -9,15 +9,20 @@ router.get(
   isAuth,
   reservationController.getUserReservations
 );
-// router.get(
-//   "/restaurantReservations",
-//   isRestaurant,
-//   reservationController.getRestaurantReservations
-// );
-// router.put(
-//   "/:id/approveOrDecline",
-//   isRestaurant,
-//   reservationController.updateReservationStatus
-// );
+router.get(
+  "/getRestaurantReservations",
+  isRestaurant,
+  reservationController.getAllReservations
+);
+router.put(
+  "/:id/approve",
+  isRestaurant,
+  reservationController.approveReservation
+);
+router.put(
+  "/:id/decline",
+  isRestaurant,
+  reservationController.declineReservation
+);
 
 export default router;

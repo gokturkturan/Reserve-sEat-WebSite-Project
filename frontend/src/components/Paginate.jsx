@@ -7,6 +7,7 @@ const Paginate = ({
   page,
   isRestaurantPage = false,
   keyword = "",
+  date = "",
 }) => {
   return (
     numberOfPage > 1 && (
@@ -19,7 +20,15 @@ const Paginate = ({
                 ? keyword
                   ? `/search/${keyword}/page/${p + 1}`
                   : `/page/${p + 1}`
-                : `/restaurant/reservations/${p + 1}`
+                : keyword
+                ? `/restaurant/reservations/branch/${keyword}/page/${p + 1}`
+                : date
+                ? `/restaurant/reservations/date/${date}/page/${p + 1}`
+                : keyword && date
+                ? `/restaurant/reservations/branch/${keyword}/date/${date}/page/${
+                    p + 1
+                  }`
+                : `/restaurant/reservations/page/${p + 1}`
             }
           >
             <Pagination.Item active={p + 1 === page}>{p + 1}</Pagination.Item>

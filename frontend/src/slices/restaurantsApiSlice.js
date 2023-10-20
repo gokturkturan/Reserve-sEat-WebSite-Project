@@ -1,4 +1,4 @@
-import { RESTAURANTS_URL } from "../constants";
+import { RESTAURANTS_URL, UPLOAD_URL } from "../constants";
 import { apiSlice } from "./apiSlice";
 
 export const restaurantsApiSlice = apiSlice.injectEndpoints({
@@ -63,6 +63,13 @@ export const restaurantsApiSlice = apiSlice.injectEndpoints({
       query: (branchId) => ({ url: `${RESTAURANTS_URL}/branch/${branchId}` }),
       keepUnusedDataFor: 5,
     }),
+    uploadRestaurantImage: builder.mutation({
+      query: (data) => ({
+        url: `${UPLOAD_URL}`,
+        method: "POST",
+        body: data,
+      }),
+    }),
   }),
 });
 
@@ -76,4 +83,5 @@ export const {
   useDeleteBranchMutation,
   useUpdateBranchMutation,
   useGetBranchQuery,
+  useUploadRestaurantImageMutation,
 } = restaurantsApiSlice;

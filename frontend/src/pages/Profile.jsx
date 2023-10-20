@@ -1,9 +1,8 @@
 import React, { useEffect, useState } from "react";
 import { Table, Form, Button, Row, Col } from "react-bootstrap";
-import { LinkContainer } from "react-router-bootstrap";
 import { useDispatch, useSelector } from "react-redux";
 import { toast } from "react-toastify";
-import { FaTimes } from "react-icons/fa";
+import { FaTimes, FaCheck, FaClock } from "react-icons/fa";
 import { useUpdateProfileMutation } from "../slices/usersApiSlice";
 import Message from "../components/Message";
 import Loader from "../components/Loader";
@@ -48,8 +47,9 @@ const Profile = () => {
           email,
           phone,
           password,
+          type: "user",
         }).unwrap();
-        dispatch(setCredentials(res));
+        dispatch(setCredentials({ ...res, type: "user" }));
         toast.success("Bilgileriniz başarılı bir şekilde güncellendi.");
       } catch (error) {
         toast.error(error?.data?.message || error.error);
@@ -82,18 +82,16 @@ const Profile = () => {
               }}
             />
           </Form.Group>
-          {userInfo.type === "user" && (
-            <Form.Group controlId="tel" className="my-2">
-              <Form.Label>Telefon</Form.Label>
-              <Form.Control
-                type="tel"
-                value={phone}
-                onChange={(e) => {
-                  setPhone(e.target.value);
-                }}
-              />
-            </Form.Group>
-          )}
+          <Form.Group controlId="tel" className="my-2">
+            <Form.Label>Telefon</Form.Label>
+            <Form.Control
+              type="tel"
+              value={phone}
+              onChange={(e) => {
+                setPhone(e.target.value);
+              }}
+            />
+          </Form.Group>
           <Form.Group controlId="password" className="my-2">
             <Form.Label>Şifre</Form.Label>
             <Form.Control
@@ -133,39 +131,41 @@ const Profile = () => {
             <thead>
               <tr>
                 <th>ID</th>
-                <th>Tarih</th>
-                <th>Toplam</th>
-                <th>Ödenme Tarihi</th>
-                <th>Teslim Edilme Tarigi</th>
-                <th></th>
+                <th>Restorant</th>
+                <th>Şube</th>
+                <th>Rezervasyon Tarihi</th>
+                <th>Rezervasyon Saati</th>
+                <th>Onay Durumu</th>
               </tr>
             </thead>
             <tbody>
-              {myReservations.map((order) => (
-                <tr key={order._id}>
-                  <td>{order._id}</td>
-                  <td>{order.createdAt.substring(0, 10)}</td>
-                  <td>{order.totalPrice} TL</td>
+              {myReservations.map((rez) => (
+                <tr key={rez._id}>
+                  <td>{rez._id}</td>
+                  <td>{rez.restaurant.name}</td>
+                  <td>{rez.branch}</td>
                   <td>
-                    {order.isPaid ? (
-                      order.paidAt.substring(0, 10)
+                    {rez.reservationDate ? (
+                      rez.reservationDate.substring(0, 10)
                     ) : (
                       <FaTimes style={{ color: "red" }} />
                     )}
                   </td>
                   <td>
-                    {order.isDelivered ? (
-                      order.deliveredAt.substring(0, 10)
+                    {rez.reservationTime ? (
+                      rez.reservationTime.substring(0, 10)
                     ) : (
                       <FaTimes style={{ color: "red" }} />
                     )}
                   </td>
                   <td>
-                    <LinkContainer to={`/order/${order._id}`}>
-                      <Button className="btn-sm" variant="light">
-                        Detaylar
-                      </Button>
-                    </LinkContainer>
+                    {rez.isApproved === "Approved" ? (
+                      <FaCheck style={{ color: "green" }} />
+                    ) : rez.isApproved === "Pending" ? (
+                      <FaClock style={{ color: "orange" }} />
+                    ) : (
+                      <FaTimes style={{ color: "red" }} />
+                    )}
                   </td>
                 </tr>
               ))}

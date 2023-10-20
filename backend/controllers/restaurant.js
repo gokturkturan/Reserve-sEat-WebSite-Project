@@ -1,7 +1,6 @@
-import path from "path";
-import fs from "fs";
 import asyncHandler from "../middleware/asyncHandler.js";
 import Restaurant from "../models/restaurant.js";
+import customLog from "../utils/log.js";
 
 const getAllRestaurants = asyncHandler(async (req, res) => {
   const perPage = 1;
@@ -57,6 +56,9 @@ const sendRestaurantReview = asyncHandler(async (req, res) => {
       restaurant.reviews.reduce((acc, review) => acc + review.rating, 0) /
       restaurant.reviews.length;
     await restaurant.save();
+    customLog(
+      `The user named ${req.user.name} sent a review to the restaurant named ${restaurant.name}.`
+    );
     res.status(200).json({ message: "Restorant başarıyla değerlendirildi." });
   } else {
     res.status(404);
@@ -84,6 +86,7 @@ const createBranch = asyncHandler(async (req, res) => {
   const updatedRestaurant = await restaurant.save();
   const newBranch =
     updatedRestaurant.branches[updatedRestaurant.branches.length - 1];
+  customLog(`The restaurant named ${req.user.name} created a branch.`);
   res.status(201).json(newBranch);
 });
 
@@ -109,6 +112,7 @@ const deleteBranch = asyncHandler(async (req, res) => {
     }
     restaurant.branches.splice(branchIndex, 1);
     await restaurant.save();
+    customLog(`The restaurant named ${req.user.name} deleted a branch.`);
     res.status(200).json({ message: "Şube başarıyla silindi." });
   } else {
     res.status(404);
@@ -158,6 +162,7 @@ const editBranch = asyncHandler(async (req, res) => {
     branch.workingHours = workingHours;
 
     const updatedRestaurant = await restaurant.save();
+    customLog(`The restaurant named ${req.user.name} edited a branch.`);
     res.status(201).json(updatedRestaurant);
   } else {
     res.status(404);

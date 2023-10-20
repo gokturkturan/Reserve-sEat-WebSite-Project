@@ -38,7 +38,6 @@ const Branches = () => {
     if (window.confirm("Yeni bir şube oluşturmak üzeresiniz!")) {
       try {
         const { data } = await createBranch();
-        console.log(data);
         navigate(`/restaurant/editBranch/${data._id}`);
       } catch (error) {
         toast.error(error?.data?.message || error.error);

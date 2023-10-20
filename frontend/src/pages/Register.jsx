@@ -67,7 +67,7 @@ const Register = () => {
             disabled={type === "user"}
             onClick={() => setType("user")}
           >
-            Kullanıcı Girişi
+            Kullanıcı Kayıdı
           </Button>
           <Button
             type="submit"
@@ -76,7 +76,7 @@ const Register = () => {
             disabled={type === "restaurant"}
             onClick={() => setType("restaurant")}
           >
-            Restorant Girişi
+            Restorant Kayıdı
           </Button>
           <Form onSubmit={submitHandler}>
             <Form.Group id="name" className="my-2" controlId="name">

@@ -1,6 +1,7 @@
 import path from "path";
 import express from "express";
 import multer from "multer";
+import { isRestaurant } from "../middleware/authHandler.js";
 
 const router = express.Router();
 
@@ -11,7 +12,7 @@ const storage = multer.diskStorage({
   filename(req, file, cb) {
     cb(
       null,
-      `${file.fieldname}-${Date.now()}${path.extname(file.originalname)}`
+      `${file.fieldname}-${req.user.name}${path.extname(file.originalname)}`
     );
   },
 });
@@ -33,11 +34,12 @@ function fileFilter(req, file, cb) {
 const upload = multer({ storage, fileFilter });
 const uploadSingleImage = upload.single("image");
 
-router.post("/", (req, res) => {
+router.post("/", isRestaurant, (req, res) => {
   uploadSingleImage(req, res, function (err) {
     if (err) {
       return res.status(400).send({ message: err.message });
     }
+    console.log(req.user);
 
     res.status(200).send({
       message: "Resim başarıyla yüklendi.",

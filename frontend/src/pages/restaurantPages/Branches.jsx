@@ -2,7 +2,7 @@ import React from "react";
 import { LinkContainer } from "react-router-bootstrap";
 import { Table, Button, Row, Col } from "react-bootstrap";
 import { FaEdit, FaTrash } from "react-icons/fa";
-import { useNavigate, useParams } from "react-router-dom";
+import { useNavigate } from "react-router-dom";
 import { toast } from "react-toastify";
 import {
   useGetBranchesQuery,
@@ -11,7 +11,6 @@ import {
 } from "../../slices/restaurantsApiSlice";
 import Message from "../../components/Message";
 import Loader from "../../components/Loader";
-import Paginate from "../../components/Paginate";
 
 const Branches = () => {
   const navigate = useNavigate();
@@ -34,7 +33,7 @@ const Branches = () => {
     }
   };
 
-  const createProductHandler = async () => {
+  const createBranchHandler = async () => {
     if (window.confirm("Yeni bir şube oluşturmak üzeresiniz!")) {
       try {
         const { data } = await createBranch();
@@ -52,7 +51,7 @@ const Branches = () => {
           <h1>Şubeler</h1>
         </Col>
         <Col className="text-end">
-          <Button className="btn-sm m-3" onClick={() => createProductHandler()}>
+          <Button className="btn-sm m-3" onClick={() => createBranchHandler()}>
             <FaEdit />
             Şube Ekle
           </Button>

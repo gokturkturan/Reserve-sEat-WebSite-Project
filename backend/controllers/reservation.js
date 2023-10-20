@@ -34,6 +34,12 @@ const makeReservation = asyncHandler(async (req, res) => {
     throw new Error("Böyle bir şube bulunamadı.");
   }
 
+  const isInRange = checkTimeRange(time, branchObject.workingHours);
+  if (!isInRange) {
+    res.status(404);
+    throw new Error("Lütfen çalışma saatlerine uygun bir saat seçiniz.");
+  }
+
   const reservation = new Reservation({
     user: req.user._id,
     restaurant: restaurantId,
@@ -228,6 +234,10 @@ const declineReservation = asyncHandler(async (req, res) => {
 
 const checkTimeRange = (time, workingHours) => {
   const timeParts = workingHours.split("-");
+  if (timeParts[1] === "00:00") {
+    timeParts[1] = "24:00";
+  }
+
   if (time > timeParts[0] && time < timeParts[1]) {
     return true;
   } else {

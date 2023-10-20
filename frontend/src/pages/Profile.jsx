@@ -21,7 +21,7 @@ const Profile = () => {
 
   const {
     data: myReservations,
-    isLoading: loadingMyOrders,
+    isLoading: loadingMyReservations,
     isError,
   } = useGetMyReservationsQuery();
 
@@ -120,7 +120,7 @@ const Profile = () => {
       </Col>
       <Col md={8}>
         <h2>Rezervasyonlarım</h2>
-        {loadingMyOrders ? (
+        {loadingMyReservations ? (
           <Loader />
         ) : isError ? (
           <Message variant="danger">

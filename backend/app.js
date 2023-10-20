@@ -5,7 +5,7 @@ import cookieParser from "cookie-parser";
 import connectDB from "./database/db.js";
 import restaurantRoutes from "./routes/restaurant.js";
 import userRoutes from "./routes/user.js";
-import orderRoutes from "./routes/reservation.js";
+import reservationRoutes from "./routes/reservation.js";
 import uploadFile from "./routes/uploadFile.js";
 import { notFound, errorHandler } from "./middleware/errorHandler.js";
 dotenv.config();
@@ -20,7 +20,7 @@ app.use(cookieParser());
 
 app.use("/api/restaurants", restaurantRoutes);
 app.use("/api/users", userRoutes);
-app.use("/api/reservations", orderRoutes);
+app.use("/api/reservations", reservationRoutes);
 app.use("/api/upload", uploadFile);
 
 const __dirname = path.resolve();

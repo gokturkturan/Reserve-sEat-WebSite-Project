@@ -4,20 +4,19 @@ import asyncHandler from "../middleware/asyncHandler.js";
 import Reservation from "../models/reservation.js";
 import Restaurant from "../models/restaurant.js";
 import customLog from "../utils/log.js";
+import AWS from "aws-sdk";
+
+AWS.config.update({
+  accessKeyId: process.env.AWS_ACCESS_KEY_ID,
+  secretAccessKey: process.env.AWS_SECRET_ACCESS_KEY_ID,
+  region: "eu-north-1",
+});
+const ses = new AWS.SES();
 
 const makeReservation = asyncHandler(async (req, res) => {
-  const { userName, userEmail, userPhone, restaurantId, branch, date, time } =
-    req.body;
+  const { restaurantId, branch, date, time } = req.body;
 
-  if (
-    !userName ||
-    !userEmail ||
-    !userPhone ||
-    !restaurantId ||
-    !branch ||
-    !date ||
-    !time
-  ) {
+  if (!restaurantId || !branch || !date || !time) {
     res.status(400);
     throw new Error("Lütfen tüm kutucukları doldurunuz.");
   }
@@ -52,26 +51,16 @@ const makeReservation = asyncHandler(async (req, res) => {
   const createdReservation = await reservation.save();
 
   if (createdReservation) {
-    const awsConfig = {
-      accessKeyId: process.env.AWS_ACCESS_KEY_ID,
-      secretAccessKey: process.env.AWS_SECRET_ACCESS_KEY_ID,
-      region: "eu-north-1",
-      apiVersion: "2010-12-01",
-    };
-
-    const awsSes = new SES(awsConfig);
-
-    awsSes.sendEmail(
+    ses.sendEmail(
       emailTemplate(
         restaurant.email,
-        `<p>The user named ${userName} sent a reservation request to yout branch named ${branch} on ${date} at ${time}.</p>`,
+        `<p>The user named ${req.user.name} sent a reservation request to yout branch named ${branch} on ${date} at ${time}.</p>`,
         process.env.RESERVE_SEAT_EMAIL,
         `Reservation Request`
       ),
       (err, data) => {
         if (err) {
-          res.status(400);
-          throw new Error("E-posta gönderilemedi.");
+          console.log(err);
         } else {
           customLog(
             `The user named ${req.user.name} made a reservation to the restaurant named ${restaurant.name}.`
@@ -144,16 +133,7 @@ const approveReservation = asyncHandler(async (req, res) => {
   reservation.isApproved = "Approved";
   const updatedReservation = await reservation.save();
   if (updatedReservation) {
-    const awsConfig = {
-      accessKeyId: process.env.AWS_ACCESS_KEY_ID,
-      secretAccessKey: process.env.AWS_SECRET_ACCESS_KEY_ID,
-      region: "eu-north-1",
-      apiVersion: "2010-12-01",
-    };
-
-    const awsSes = new SES(awsConfig);
-
-    awsSes.sendEmail(
+    ses.sendEmail(
       emailTemplate(
         reservation.user.email,
         `<p>Dear customer ${
@@ -168,8 +148,7 @@ const approveReservation = asyncHandler(async (req, res) => {
       ),
       (err, data) => {
         if (err) {
-          res.status(400);
-          throw new Error("E-posta gönderilemedi.");
+          console.log(err);
         } else {
           customLog(
             `The restaurant named ${req.user.name} approved the reservation of the user named ${reservation.user.name}.`
@@ -198,16 +177,7 @@ const declineReservation = asyncHandler(async (req, res) => {
   const updatedReservation = await reservation.save();
 
   if (updatedReservation) {
-    const awsConfig = {
-      accessKeyId: process.env.AWS_ACCESS_KEY_ID,
-      secretAccessKey: process.env.AWS_SECRET_ACCESS_KEY_ID,
-      region: "eu-north-1",
-      apiVersion: "2010-12-01",
-    };
-
-    const awsSes = new SES(awsConfig);
-
-    awsSes.sendEmail(
+    ses.sendEmail(
       emailTemplate(
         reservation.user.email,
         `<p>Dear customer ${reservation.user.name}, unfortunately we cannot confirm your reservation.</p>`,
@@ -216,8 +186,7 @@ const declineReservation = asyncHandler(async (req, res) => {
       ),
       (err, data) => {
         if (err) {
-          res.status(400);
-          throw new Error("E-posta gönderilemedi.");
+          console.log(err);
         } else {
           customLog(
             `The restaurant named ${req.user.name} declined the reservation of the user named ${reservation.user.name}.`

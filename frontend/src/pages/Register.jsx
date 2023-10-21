@@ -2,10 +2,9 @@ import React from "react";
 import { Form, Button, Container, Row, Col } from "react-bootstrap";
 import { useState, useEffect } from "react";
 import { Link, useLocation, useNavigate } from "react-router-dom";
-import { useDispatch, useSelector } from "react-redux";
+import { useSelector } from "react-redux";
 import Loader from "../components/Loader";
 import { useRegisterMutation } from "../slices/usersApiSlice";
-import { setCredentials } from "../slices/authSlice";
 import { toast } from "react-toastify";
 
 const Register = () => {
@@ -16,7 +15,6 @@ const Register = () => {
   const [confirmPassword, setConfirmPassword] = useState("");
   const [type, setType] = useState("user");
 
-  const dispatch = useDispatch();
   const navigate = useNavigate();
 
   const [register, { isLoading }] = useRegisterMutation();
@@ -40,15 +38,15 @@ const Register = () => {
       return;
     } else {
       try {
-        const res = await register({
+        await register({
           name,
           email,
           phone,
           password,
           type,
         }).unwrap();
-        dispatch(setCredentials({ ...res }));
-        navigate(redirect);
+        toast("Lütfen E-Postanıza gelen doğrulama linkine tıklayınız.");
+        navigate("/login");
       } catch (error) {
         toast.error(error?.data?.message || error.error);
       }

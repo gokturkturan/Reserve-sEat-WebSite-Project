@@ -96,9 +96,6 @@ const SelectReservationDetails = () => {
     e.preventDefault();
     try {
       const res = await makeReservation({
-        userName,
-        userEmail,
-        userPhone,
         restaurantId,
         branch,
         date,
@@ -124,6 +121,7 @@ const SelectReservationDetails = () => {
                 type="text"
                 value={userName}
                 required
+                disabled
                 onChange={(e) => {
                   setUserName(e.target.value);
                 }}
@@ -135,6 +133,7 @@ const SelectReservationDetails = () => {
                 type="text"
                 value={userEmail}
                 required
+                disabled
                 onChange={(e) => {
                   setUserEmail(e.target.value);
                 }}
@@ -146,6 +145,7 @@ const SelectReservationDetails = () => {
                 type="tel"
                 value={userPhone}
                 required
+                disabled
                 onChange={(e) => {
                   setUserPhone(e.target.value);
                 }}
